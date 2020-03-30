@@ -31,12 +31,14 @@ function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config
   delimiterIdxs = strfind(dateRow, ',');
   delimIdx = delimiterIdxs{1};
   dateRowCell = dateRow{1};
+  dateArray = cell();
   for nIdx = 5:size(delimIdx, 2)
-    [dt, nchars] = strptime(dateRowCell(delimIdx(nIdx-1) + 1 : delimIdx(nIdx) - 1), '%m/%d/%y');
-    dateArray(nIdx - 4) = dt;
+    % [dt, nchars] = strptime(dateRowCell(delimIdx(nIdx-1) + 1 : delimIdx(nIdx) - 1), '%m/%d/%y');
+    dateArray(nIdx - 4) = datenum(dateRowCell(delimIdx(nIdx-1) + 1 : delimIdx(nIdx) - 1));
   endfor
-  [dt, nchars] = strptime(dateRowCell(delimIdx(nIdx) + 1 : end), '%m/%d/%y');
-  dateArray(nIdx - 3) = dt;
+  % [dt, nchars] = strptime(dateRowCell(delimIdx(nIdx) + 1 : end), '%m/%d/%y');
+  dateArray(nIdx - 3) = datenum(dateRowCell(delimIdx(nIdx) + 1 : end));
+
   dates = dateArray;
 
   provinceCol = cellCsv(2:end, 1);

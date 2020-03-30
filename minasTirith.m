@@ -18,10 +18,8 @@ for i = 1:size(filteredCountries)
   endif
 endfor
 
-for q = 1:size(dates, 2)
-  %dateArray(q) = strftime('mmm-dd', dates(q));
-  dateArray(q) = asctime(dates(q));
-endfor
-
-plot(dates, cell2mat(plotData(:, 2)));
+plot(cell2mat(dates), cell2mat(plotData(:, 2)));
+% figure,
+% ax = gca;
+legend(plotData(:,1),'Location','northwest')
 
