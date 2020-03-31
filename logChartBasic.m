@@ -1,5 +1,5 @@
 pkg load io;
-clf;
+
 
 Config = Configuration();
 location = Config.('location');
@@ -12,7 +12,7 @@ filePath = [location, '/', filename];
 url = [baseUrl, '/', filename];
 [dates, countryData, countryProvinceStruct] = processFile (protectorates, filePath, url);
 plotBasicChart (filteredCountries, dates, countryData, "-o", true);
-ylabel('Confirmed Cases')
+ylabel('Confirmed Cases (Logarthmic)')
 figure,
 
 filename = Config.('deathsFilename');
@@ -20,7 +20,7 @@ filePath = [location, '/', filename];
 url = [baseUrl, '/', filename];
 [dates, countryData, countryProvinceStruct] = processFile (protectorates, filePath, url);
 plotBasicChart(filteredCountries, dates, countryData, "-*", true);
-ylabel('Deaths')
+ylabel('Deaths (Logarthmic)')
 figure,
 
 filename = Config.('recoveredFilename');
@@ -28,4 +28,4 @@ filePath = [location, '/', filename];
 url = [baseUrl, '/', filename];
 [dates, countryData, countryProvinceStruct] = processFile (protectorates, filePath, url);
 plotBasicChart(filteredCountries, dates, countryData, "-d", true);
-ylabel('Recovered')
+ylabel('Recovered (Logarthmic)')

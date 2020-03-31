@@ -1,5 +1,4 @@
 pkg load io; % pkg install -forge io
-clf
 
 Config = Configuration();
 location = Config.('location');
@@ -31,5 +30,3 @@ url = [baseUrl, '/', filename];
 [dates, countryData, countryProvinceStruct] = processFile (protectorates, filePath, url);
 plotBasicChart (filteredCountries, dates, countryData, "-d");
 ylabel('Recovered')
-
-

@@ -14,32 +14,31 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## -*- texinfo -*- 
-## @deftypefn {} {@var{retval} =} plotProcessedData (@var{input1}, @var{input2})
+## @deftypefn {} {@var{retval} =} plotSingleCountry (@var{input1}, @var{input2})
 ##
 ## @seealso{}
 ## @end deftypefn
 
 ## Author: V <v@ARCTURUS>
-## Created: 2020-03-30
+## Created: 2020-03-31
 
-function [retval] = plotBasicChart (filteredCountries, dates, countryData, marker, logChart = false)
-  for i = 1:size(filteredCountries)
-    country = strtrim(filteredCountries(i, :));
-    if(isfield(countryData, country))
-      plotData{i, 1} = country;
-      plotData{i, 2} = countryData.(country);
-    else
-      printf("WARN: COULDN'T FIND: %s\n", country);
-    endif
-  endfor
-  if (logChart)
-    h = semilogy(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
+function [hax, h1, h2] = plotSingleCountry (convertDateNumCellArrToStr, dates, xSer, ySer, y2, logAxis = false)
+  clf;
+  hold on;
+  
+  if (logAxis)
+    [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)), @semilogy);
   else
-    h = plot(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
+    [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)));
   endif
   colormap(rainbow(64));
-  ax = gca;
-  legend(plotData(:,1),'Location','northwest')
-  datetick("x", "dd-mmm");
-  retval = h;
+  set(hax(2),'XGrid','on', 'YGrid', 'on');
+  set(hax(1),'xticklabel', convertDateNumCellArrToStr(dates, '%d-%b'));
+  set(hax(2),'xticklabel', convertDateNumCellArrToStr(dates, '%d-%b'));
+  set(h1, 'Marker', 'o');
+  set(h2, 'Marker', ['*'; 'd']);
+  legend([ySer{1}; y2(:,1)],'Location','northwest');
+  ylabel (hax(1), "Cases");
+  ylabel (hax(2), "Recoveries & Deaths");
+
 endfunction
