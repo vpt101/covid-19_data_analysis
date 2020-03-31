@@ -22,7 +22,7 @@
 ## Author: V <v@ARCTURUS>
 ## Created: 2020-03-31
 
-function [retval] = plotLogChart (filteredCountries, dates, countryData, marker)
+function [retval] = plotBasicLogChart (filteredCountries, dates, countryData, marker)
   for i = 1:size(filteredCountries)
     country = strtrim(filteredCountries(i, :));
     if(isfield(countryData, country))

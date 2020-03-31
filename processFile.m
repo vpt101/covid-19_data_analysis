@@ -22,15 +22,24 @@
 ## Author: V <v@ARCTURUS>
 ## Created: 2020-03-30
 
-function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config, filePath, url)
-  url
-  filePath
-  urlwrite(url, filePath)
+function [dates, countryDataStruct, countryProvinceStruct] = processFile (protectorates, filePath, url)
+  if (!exist(filePath))
+    printf("%s doesn't exist. Downloading...\n", filePath);
+    urlwrite(url, filePath);
+  else
+    fileStats = stat(filePath);
+    mtime = fileStats.('mtime');
+    if ((time() - mtime) >= 14400)
+      printf("Timestamp on '%s' > 4 hrs. Downloading...\n", filePath);
+    urlwrite(url, filePath);
+    endif
+  endif
   f = importdata(filePath, ',');
   cellCsv = csv2cell (filePath);
   numDataCols = (size(cellCsv, 2) - 4);
 
-  dateRow = f.textdata(1, 1); %c(1, 5:end); %<- Try that.
+  dateRow = f.textdata(1, 1); %cellCsv(1, 5:end); %<- Try that.
+  % dateRow = cellCsv(1, 5:end); 
   delimiterIdxs = strfind(dateRow, ',');
   delimIdx = delimiterIdxs{1};
   dateRowCell = dateRow{1};
@@ -62,7 +71,7 @@ function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config
     if (!isempty(provinceName))
       % Treat protectorates as different countries for now
       % Config.('protectorates') has a list of protectorates
-      if(!any(strcmp(cellstr(Config.('protectorates')), provinceName)))
+      if(!any(strcmp(cellstr(protectorates), provinceName)))
         listOfProvinces = countryProvinceStruct.(countryName);
         countryProvinceStruct.(countryName) = [listOfProvinces; provinceName];
         existingData = countryDataStruct.(countryName);
@@ -83,4 +92,6 @@ function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config
     endif
   endfor
   countryData = struct2cell(countryDataStruct);
+  pkg load general;
+  mark_for_deletion(filePath)
 endfunction
