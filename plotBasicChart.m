@@ -22,7 +22,7 @@
 ## Author: V <v@ARCTURUS>
 ## Created: 2020-03-30
 
-function [retval] = plotProcessedData (filteredCountries, dates, countryData)
+function [retval] = plotBasicChart (filteredCountries, dates, countryData)
   for i = 1:size(filteredCountries)
     country = strtrim(filteredCountries(i, :));
     if(isfield(countryData, country))
