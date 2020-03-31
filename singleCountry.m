@@ -42,24 +42,16 @@ recoveries = countryData.(country);
 xSer = cell2mat(dates);
 ySer{1, 1} = 'Cases';
 ySer{1, 2} = cases;
-
-pkg load statistics;
-casesRange = nanmax(cases) - nanmin(cases);
-recoveriesRange = nanmax(recoveries) - nanmin(recoveries);
-deathsRange = nanmax(deaths) - nanmin(deaths);
 y2{1, 1} = 'Recovered';
 y2{1, 2} = recoveries;
 y2{2, 1} = 'Deaths';
 y2{2, 2} = deaths;
-
 clf;
 hold on;
 [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)));
 set(hax(2),'XGrid','on', 'YGrid', 'on');
 set(hax(1),'xticklabel', convertDateNumCellArrToStr(dates, '%d-%b'));
 set(hax(2),'xticklabel', convertDateNumCellArrToStr(dates, '%d-%b'));
-
-
 legend([ySer{1}; y2(:,1)],'Location','northwest');
 ylabel (hax(1), "Confirmed");
 ylabel (hax(2), "Recoveries & Deaths");

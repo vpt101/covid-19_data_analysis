@@ -22,7 +22,7 @@
 ## Author: V <v@ARCTURUS>
 ## Created: 2020-03-30
 
-function [retval] = plotBasicChart (filteredCountries, dates, countryData, marker)
+function [retval] = plotBasicChart (filteredCountries, dates, countryData, marker, logChart = false)
   for i = 1:size(filteredCountries)
     country = strtrim(filteredCountries(i, :));
     if(isfield(countryData, country))
@@ -32,10 +32,13 @@ function [retval] = plotBasicChart (filteredCountries, dates, countryData, marke
       printf("WARN: COULDN'T FIND: %s\n", country);
     endif
   endfor
-
-  plot(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
+  if (logChart)
+    h = semilogy(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
+  else
+    h = plot(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
+  endif
   ax = gca;
   legend(plotData(:,1),'Location','northwest')
   datetick("x", "dd-mmm");
-  retval = 1;
+  retval = h;
 endfunction
