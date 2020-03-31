@@ -9,11 +9,11 @@ function [Config] = Configuration()
   protectorates = [protectorates;'Northwest Territories';'Yukon';'Anguilla'];
   protectorates = [protectorates;'British Virgin Islands';'Turks and Caicos Islands'];
   Config.('protectorates') = protectorates;
-  Config.('location') = '/home/v/vcvpt/COVID-19/csse_covid_19_data/csse_covid_19_time_series';
+  Config.('baseUrl') = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series';
+  Config.('location') = '/tmp';
   Config.('confirmedFilename') = 'time_series_covid19_confirmed_global.csv';
   Config.('deathsFilename') = 'time_series_covid19_deaths_global.csv';
   Config.('recoveredFilename') = 'time_series_covid19_recovered_global.csv';
-  Config.('defaultCountryList') = ['US'; 'China'; 'Italy'; 'Spain'; 'United Kingdom'];
-  
+  Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'];
   
 endfunction

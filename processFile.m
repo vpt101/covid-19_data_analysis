@@ -22,7 +22,10 @@
 ## Author: V <v@ARCTURUS>
 ## Created: 2020-03-30
 
-function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config, filePath)
+function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config, filePath, url)
+  url
+  filePath
+  urlwrite(url, filePath)
   f = importdata(filePath, ',');
   cellCsv = csv2cell (filePath);
   numDataCols = (size(cellCsv, 2) - 4);
@@ -33,10 +36,8 @@ function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config
   dateRowCell = dateRow{1};
   dateArray = cell();
   for nIdx = 5:size(delimIdx, 2)
-    % [dt, nchars] = strptime(dateRowCell(delimIdx(nIdx-1) + 1 : delimIdx(nIdx) - 1), '%m/%d/%y');
     dateArray(nIdx - 4) = datenum(dateRowCell(delimIdx(nIdx-1) + 1 : delimIdx(nIdx) - 1));
   endfor
-  % [dt, nchars] = strptime(dateRowCell(delimIdx(nIdx) + 1 : end), '%m/%d/%y');
   dateArray(nIdx - 3) = datenum(dateRowCell(delimIdx(nIdx) + 1 : end));
 
   dates = dateArray;
@@ -81,5 +82,5 @@ function [dates, countryDataStruct, countryProvinceStruct] = processFile (Config
       countryDataStruct.(countryName) = existingData + rowData;
     endif
   endfor
-countryData = struct2cell(countryDataStruct);
+  countryData = struct2cell(countryDataStruct);
 endfunction

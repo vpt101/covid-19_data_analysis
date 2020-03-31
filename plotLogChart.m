@@ -14,15 +14,15 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## -*- texinfo -*- 
-## @deftypefn {} {@var{retval} =} plotProcessedData (@var{input1}, @var{input2})
+## @deftypefn {} {@var{retval} =} plotLogChart (@var{input1}, @var{input2})
 ##
 ## @seealso{}
 ## @end deftypefn
 
 ## Author: V <v@ARCTURUS>
-## Created: 2020-03-30
+## Created: 2020-03-31
 
-function [retval] = plotBasicChart (filteredCountries, dates, countryData, marker)
+function [retval] = plotLogChart (filteredCountries, dates, countryData, marker)
   for i = 1:size(filteredCountries)
     country = strtrim(filteredCountries(i, :));
     if(isfield(countryData, country))
@@ -33,7 +33,7 @@ function [retval] = plotBasicChart (filteredCountries, dates, countryData, marke
     endif
   endfor
 
-  plot(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
+  semilogy(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
   ax = gca;
   legend(plotData(:,1),'Location','northwest')
   datetick("x", "dd-mmm");
