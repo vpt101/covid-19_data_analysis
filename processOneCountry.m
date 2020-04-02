@@ -48,7 +48,7 @@ function [retval] = processOneCountry(country)
   url = [baseUrl, '/', filename];
   [dates, countryData, countryProvinceStruct] = processFile(protectorates, filePath, url);
   recoveries = countryData.(country);
-
+  
   xSer = cell2mat(dates);
   ySer{1, 1} = 'Cases';
   ySer{1, 2} = cases;
@@ -57,8 +57,6 @@ function [retval] = processOneCountry(country)
   y2{2, 1} = 'Deaths';
   y2{2, 2} = deaths;
   
-  range(xSer);
-
   convertDateNumCellArrToStr = Config.('dateAxisFormatter');
   % Regular chart
   [hax, h1, h2] = plotSingleCountry(convertDateNumCellArrToStr, dates, xSer, ySer, y2);
@@ -69,4 +67,4 @@ function [retval] = processOneCountry(country)
   plotSingleCountry(convertDateNumCellArrToStr, dates, xSer, ySer, y2, true);
   title([country, '(Logarithmic)' ])
 
-  endfunction
+endfunction

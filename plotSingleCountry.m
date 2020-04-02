@@ -25,16 +25,22 @@
 function [hax, h1, h2] = plotSingleCountry (convertDateNumCellArrToStr, dates, xSer, ySer, y2, logAxis = false)
   clf;
   hold on;
-  
+
   if (logAxis)
     [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)), @semilogy);
   else
     [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)));
   endif
-  colormap(rainbow(64));
+  colormap(rainbow(6));
   set(hax(2),'XGrid','on', 'YGrid', 'on');
-  set(hax(1),'xticklabel', convertDateNumCellArrToStr(dates, '%d-%b'));
-  set(hax(2),'xticklabel', convertDateNumCellArrToStr(dates, '%d-%b'));
+  x1ticks = get(hax(1), 'xticklabel');
+   
+  for (m = 1:size(x1ticks, 2))
+    xTicks{1, m} = str2num(x1ticks{1, m}); 
+  endfor
+  formattedTicks = convertDateNumCellArrToStr(xTicks,'%d-%b');
+  set(hax(1),'xticklabel', formattedTicks);
+  set(hax(2), 'xticklabel', formattedTicks);
   set(h1, 'Marker', 'o');
   set(h2, 'Marker', ['*'; 'd']);
   legend([ySer{1}; y2(:,1)],'Location','northwest');

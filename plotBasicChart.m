@@ -32,14 +32,20 @@ function [retval] = plotBasicChart (filteredCountries, dates, countryData, marke
       printf("WARN: COULDN'T FIND: %s\n", country);
     endif
   endfor
+
   if (logChart)
     h = semilogy(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
   else
     h = plot(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
   endif
-  colormap(rainbow(64));
+  % dateaxis("x");
+  legend(plotData(:,1),'Location','northwest');
+  colormap(rainbow);
   ax = gca;
-  legend(plotData(:,1),'Location','northwest')
+  grid on
   datetick("x", "dd-mmm");
+  
+  
   retval = h;
+
 endfunction
