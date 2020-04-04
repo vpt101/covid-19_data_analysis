@@ -1,7 +1,7 @@
 pkg load io;
 
 # processOneCountry('United Kingdom');
-processOneCountry('India');
+processAndPlotOneCountry('India');
 # processOneCountry('Aruba(Netherlands)');
 # processOneCountry('Spain');
 # processOneCountry('US');
