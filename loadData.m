@@ -55,4 +55,4 @@ function [dates, countryDataConfirmed, countryDataRecovered, countryDataDeaths, 
   url = [baseUrl, '/', filename];
   [dates, countryDataRecovered, countryProvinceStruct] = processFile (protectorates, filePath, url);
   
-  endfunction
+endfunction

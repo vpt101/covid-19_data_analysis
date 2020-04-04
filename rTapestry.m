@@ -1,4 +1,4 @@
-pkg load io; % pkg install -forge io
+pkg load io;
 
 [dates, countryDataConfirmed, countryDataRecovered, countryDataDeaths, countryProvinceStruct, filteredCountries] = loadData();
 
