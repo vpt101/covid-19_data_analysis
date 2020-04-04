@@ -1,4 +1,6 @@
 function [Config] = Configuration()
+  pkg load statistics;
+  
   Config = struct();
   protectorates = ['French Guiana';'French Polynesia';'Guadeloupe';'Mayotte'];
   protectorates = [protectorates;'New Caledonia';'Reunion';'Saint Barthelemy'];
