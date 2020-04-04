@@ -14,7 +14,11 @@ function [Config] = Configuration()
   Config.('confirmedFilename') = 'time_series_covid19_confirmed_global.csv';
   Config.('deathsFilename') = 'time_series_covid19_deaths_global.csv';
   Config.('recoveredFilename') = 'time_series_covid19_recovered_global.csv';
-  Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'; 'US'];
+  
+  # Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'; 'US'];
+  Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'; 'US'; 'India'];
+  
+  
   % Anon func that calls cellfun with another anon func 
   Config.('dateAxisFormatter') = @(dtCellArray, fmt) cellfun(@(x) datestr(x, fmt), dtCellArray, 'UniformOutput', false);
 

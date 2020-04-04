@@ -38,12 +38,16 @@ function [retval] = plotBasicChart (filteredCountries, dates, countryData, marke
   else
     h = plot(cell2mat(dates), cell2mat(plotData(:, 2)), marker);
   endif
-  % dateaxis("x");
+
   legend(plotData(:,1),'Location','northwest');
   colormap(rainbow);
   ax = gca;
   grid on
-  datetick("x", "dd-mmm");
+  datetick("x", "dd-mmm", 'keepticks');
+  
+  q = datacursor();
+  x = get (q, "x")(2)
+  y = get (q, "y")(2)
   
   
   retval = h;
