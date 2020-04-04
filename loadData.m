@@ -23,7 +23,16 @@
 ## Author: v <v@PROCYONB>
 ## Created: 2020-04-03
 
-function [dates, countryDataConfirmed, countryDataRecovered, countryDataDeaths, countryProvinceStruct, filteredCountries] = loadData ()
+function [dates, countryDataConfirmed, countryDataRecovered, ...
+   countryDataDeaths, countryProvinceStruct, filteredCountries] = loadData ()
+
+  global dates;
+  global countryDataConfirmed;
+  global countryDataDeaths;
+  global countryDataRecovered;
+  global countryProvinceStruct;
+  global filteredCountries;
+ 
   Config = Configuration();
   location = Config.('location');
   baseUrl = Config.('baseUrl');
@@ -34,13 +43,6 @@ function [dates, countryDataConfirmed, countryDataRecovered, countryDataDeaths, 
   filePath = [location, '/', filename];
   url = [baseUrl, '/', filename];
   
-  global dates;
-  global countryDataConfirmed;
-  global countryDataDeaths;
-  global countryDataRecovered;
-  global countryProvinceStruct;
-  global filteredCountries;
-
   [dates, countryDataConfirmed, countryProvinceStruct] = processFile (protectorates, filePath, url);
 
 
