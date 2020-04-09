@@ -23,25 +23,30 @@
 ## Author: v <v@PROCYONB>
 ## Created: 2020-04-04
 
-function [f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = fitCurve (country, dataX, dataY, leasqrfunc)
+function [f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = fitCurve (dataX, dataY, leasqrfunc)
   Y = dataY;
   X = dataX;
 
   [alpha, C, rms] = expfit (2, 1, 1, Y);
 
-  %% model = C(1)*exp(alpha(1) * X) + C(2)*exp(alpha(2) * X);
-  %% plot(X, countryDataConfirmed.(country), X, model), legend([country; 'Model'],'Location','northwest');
-  %% title('Using expfit');
-
-  pin = [alpha, C];
-  wt1 = (1 + 0 * X) ./ sqrt(Y);
-  wt1(isinf(wt1)) = 0.1;
-  stol=0.0001; niter=80;
+%%  model = C(1)*exp(alpha(1) * X) + C(2)*exp(alpha(2) * X);
+%%  plot(X, Y, X, model), legend(['-'; 'Model'],'Location','northwest');
+%%  title('Using expfit');
+%%  figure,
+  
+  % fromTheEgOfLeasqr = @(x, p) p(1) * exp (-p(2) * x);
+  pin = [alpha; C];
+  pin = abs(pin);
+  # pin = [0.1, 2, 3, 1]
+  # wt1 = (1 + 0 * X) ./ sqrt(Y);
+  
+  stol=0.0001; niter=150;
   dp = 0.001 * ones (size (pin));
   
   [f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ... 
     leasqr (X, Y, pin, ... 
-    leasqrfunc, stol, niter); %, wt1, dp);
-    
+    % fromTheEgOfLeasqr,
+    leasqrfunc,...
+    stol, niter); %, wt1, dp);
 
 endfunction
