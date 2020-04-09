@@ -1,3 +1,4 @@
+%% Scratchpad
 % Define functions
  leasqrfunc = @(x, p) p(1) * exp (-p(2) * x);
  leasqrdfdp = @(x, f, p, dp, func) [exp(-p(2)*x), -p(1)*x.*exp(-p(2)*x)];

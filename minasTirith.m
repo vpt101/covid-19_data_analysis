@@ -1,7 +1,8 @@
 pkg load optim
 rDataLoad;
+% leasqrfunc = @ (x, p) p(1) * exp (p(2) * x);
 % leasqrfunc = @(x, p) p(3) * exp(p(1) .* x) + p(4) * exp(p(2) .* x);
-leasqrfunc = @ (x, p) p(1) * exp (p(2) * x);
+leasqrfunc = @(x, p) p(3) ./ (1 + exp(-(x .- p(2)) ./ p(1)))
 
 X = 1:1:size(dates, 2);
 
@@ -46,38 +47,47 @@ matrix = [];
 xmatrix = [];
 [xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('Italy'), matrix);
 [xmatrix, matrix] = prepFitting(X, xmatrix,  countryDataConfirmed.('Spain'), matrix);
+[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('US'), matrix);
+[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('United Kingdom'), matrix);
+[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('Germany'), matrix);
+[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('India'), matrix);
 
-[alpha, C, rms] = expfit (2, 1, 1, countryDataConfirmed.('Italy'))
-[alpha, C, rms] = expfit (2, 1, 1, countryDataConfirmed.('Spain'))
+%%[alpha, C, rms] = expfit (2, 1, 1, countryDataConfirmed.('Italy'))
+%%[alpha, C, rms] = expfit (2, 1, 1, countryDataConfirmed.('Spain'))
+%%plot(X, f1, X, countryDataConfirmed.('Spain'));
 
 [f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ...
     fitCurve(xmatrix, matrix, leasqrfunc);
+size(f1)
 
-# plot(X, f1, X, countryDataConfirmed.('Spain'));
+
 #xSer = cell2mat(X);
+# plot(X, f1, xmatrix(1, :), f1, xmatrix(1, :), cell2mat(ySer(:, 2)));
+
 ySer{1, 1} = 'Spain';
 ySer{1, 2} = countryDataConfirmed.('Spain');
 ySer{2, 1} = 'Italy';
 ySer{2, 2} = countryDataConfirmed.('Italy');
 
-plotyy(X, f1(1:2:size(f1,1)), xmatrix(1, :), cell2mat(ySer(:, 2)));
-# plot(X, f1, xmatrix(1, :), f1, xmatrix(1, :), cell2mat(ySer(:, 2)));
-return;
+plotyy(X, f1(1:size(matrix, 1):size(f1, 1)), xmatrix(1, :), cell2mat(ySer(:, 2)));
+
+return
 figure,
 
-matrix = [];
-xmatrix = [];
-matrix = prepFitting(X, xmatrix,  countryDataConfirmed.('US'), matrix);
-matrix = prepFitting(X, xmatrix,  countryDataConfirmed.('United Kingdom'), matrix);
+
+%%matrix = [];
+%%xmatrix = [];
+[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('US'), matrix);
+[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('United Kingdom'), matrix);
 
 
-matrix = [];
-xmatrix = [];
-matrix = prepFitting(X, xmatrix,  countryDataConfirmed.('Germany'), matrix);
-matrix = prepFitting(X, xmatrix,  countryDataConfirmed.('Germany'), matrix);
 
-#[f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ...
-#    fitCurve('IT_ES_US_UK_DE', X, matrix, leasqrfunc);
+%%matrix = [];
+%%xmatrix = [];
+[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.('Germany'), matrix);
+
+[f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ...
+    fitCurve('IT_ES_US_UK_DE', X, matrix, leasqrfunc);
 
 
 ##country = 'India';

@@ -22,10 +22,10 @@
 ## Author: V <v@ARCTURUS>
 ## Created: 2020-03-31
 
-function [hax, h1, h2] = plotSingleCountry (convertDateNumCellArrToStr, dates, xSer, ySer, y2, logAxis = false)
+function [hax, h1, h2] = plotSingleCountry (convertDateNumCellArrToStr, xSer, ySer, y2, logAxis = false)
   clf;
   hold on;
-
+  size(xSer);
   if (logAxis)
     [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)), @semilogy);
   else
@@ -41,10 +41,14 @@ function [hax, h1, h2] = plotSingleCountry (convertDateNumCellArrToStr, dates, x
   formattedTicks = convertDateNumCellArrToStr(xTicks,'%d-%b');
   set(hax(1),'xticklabel', formattedTicks);
   set(hax(2), 'xticklabel', formattedTicks);
+  set(hax(1), 'yminorgrid', 'on');
+  set(hax(1), 'yminortick', 'on');
+  set(hax(2), 'yminorgrid', 'on');
+  set(hax(2), 'yminortick', 'on');
   set(h1, 'Marker', 'o');
   set(h2, 'Marker', ['*'; 'd']);
-  legend([ySer{1}; y2(:,1)],'Location','northwest');
-  ylabel (hax(1), "Cases");
-  ylabel (hax(2), "Recoveries & Deaths");
+  legend([ySer(:,1); y2(:,1)],'Location','northwest');
+  ylabel (hax(1), "Cases & Recoveries");
+  ylabel (hax(2), "Deaths");
 
 endfunction

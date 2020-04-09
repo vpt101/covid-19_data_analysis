@@ -22,7 +22,7 @@
 ## Author: V <v@ARCTURUS>
 ## Created: 2020-03-31
 
-function [retval] = processOneCountry(country)
+function [retval] = processAndPlotOneCountry(country)
   if ~nargin
     country = 'US'
   endif
@@ -52,19 +52,36 @@ function [retval] = processOneCountry(country)
   xSer = cell2mat(dates);
   ySer{1, 1} = 'Cases';
   ySer{1, 2} = cases;
-  y2{1, 1} = 'Recovered';
-  y2{1, 2} = recoveries;
-  y2{2, 1} = 'Deaths';
-  y2{2, 2} = deaths;
+  ySer{2, 1} = 'Recovered';
+  ySer{2, 2} = recoveries;
+  y2{1, 1} = 'Deaths';
+  y2{1, 2} = deaths;
   
   convertDateNumCellArrToStr = Config.('dateAxisFormatter');
   % Regular chart
-  [hax, h1, h2] = plotSingleCountry(convertDateNumCellArrToStr, dates, xSer, ySer, y2);
+  [hax, h1, h2] = plotSingleCountry(convertDateNumCellArrToStr, xSer, ySer, y2);
   title([country, '(Linear)' ])
   figure,
   
   % Logarithmic chart
-  plotSingleCountry(convertDateNumCellArrToStr, dates, xSer, ySer, y2, true);
+  plotSingleCountry(convertDateNumCellArrToStr, xSer, ySer, y2, true);
   title([country, '(Logarithmic)' ])
-
+  figure,
+  
+%%  y3{1, 1} = 'Cases';
+%%  y3{1, 2} = diff(cases);
+%%  y3{2, 1} = 'Recovered';
+%%  y3{2, 2} = diff(recoveries);
+%%  y3{3, 1} = 'Deaths';
+%%  y3{3, 2} = diff(deaths);
+%%
+%%  h = bar(cell2mat(y3(:, 2)));
+%%
+%%  set (h(1), "facecolor", "r");
+%%  set (h(2), "facecolor", "g");
+%%  set (h(3), "facecolor", "b");
+  
+  
+  h = bar(diff(cases), "hist");
+  
 endfunction

@@ -8,3 +8,6 @@ Loading, processing and plotting the data from the John Hopkins COVID-19 databas
 # basicCharts
 # logChartBasic
 # singleCountry
+# tapestry
+# minasTirith for curve-fitting based off of optim documentation and
+1.   https://towardsdatascience.com/covid-19-infection-in-italy-mathematical-models-and-predictions-7784b4d7dd8d

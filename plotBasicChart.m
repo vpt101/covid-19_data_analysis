@@ -43,6 +43,8 @@ function [retval] = plotBasicChart (filteredCountries, dates, countryData, marke
   colormap(rainbow);
   ax = gca;
   grid on
+  set(h, 'yminorgrid', 'on');
+  set(h, 'yminortick', 'on');
   datetick("x", "dd-mmm", 'keepticks');
   
   q = datacursor();
