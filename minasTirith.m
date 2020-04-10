@@ -63,9 +63,20 @@ function fitMeBabyOneMoreTime(countryNames, xdata, ydata, p, leasqrfunc)
   
 endfunction
 
+function doCurveFit(dates, countries, rawdata, leasqrfunc)
+  matrix = [];
+  xmatrix = [];
+  X = 1:1:size(dates, 2);
+  for cidx = 1:size(countries, 1)
+    country = strtrim(countries(cidx, :));
+    [xmatrix, matrix] = prepFitting(X, xmatrix, rawdata.(country), matrix);
+    fitMeBabyOneMoreTime(countries, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
+  endfor  
+endfunction
 
 X = 1:1:size(dates, 2);
-
+doCurveFit(X, ['Italy'; 'Spain'; 'US'; 'United Kingdom'; 'Germany'], countryDataConfirmed, leasqrfunc);
+figure,
 
 matrix = [];
 xmatrix = [];
@@ -93,7 +104,7 @@ ySer{5, 2} = countryDataConfirmed.("Germany");
 plotyy(xmatrix(1, :), f1(1:size(matrix, 1):size(f1, 1)), X, cell2mat(ySer(:, 2)));
 legend(["Model"; "Spain"; "Italy"; "US"; "UK"; "Germany"],"Location","northwest");
 
-
+return
 figure,
 
 
