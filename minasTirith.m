@@ -5,17 +5,6 @@ leasqrFn1 = @(x, p) p(3) * exp(p(1) .* x) + p(4) * exp(p(2) .* x);
 logisticFn = @(x, p) p(3) ./ (1 .+ exp(-(x .- p(2)) ./ p(1)));
 leasqrfunc = logisticFn
 
-%%function [Q] = leasqrfunc1(x, p)
-%%  "p="
-%%  disp(p);
-%%  "x="
-%%  disp(x);
-%%  % Q = p(1) * exp (p(2) * x);
-%%  Q = p(3) * exp(p(1) * x) + p(4) * exp(p(2) * x);
-%%endfunction
-
-# leasqrfunc = @(x, p) leasqrfunc1(x, p)
-
 function [xmatrix, matrix] = prepFitting(xdata, xmatrix, ydata, matrix) 
   ysz = size(matrix, 1);
   yDiffs = diff(ydata);
@@ -27,40 +16,28 @@ endfunction
 
 function fitMeBabyOneMoreTime(countryNames, xdata, ydata, p, leasqrfunc) 
 
-%%  rawCountryData = ydata;
-%%  for ydx = 1:1:size(ydata, 1)
-%%    %% Can"t get this to work
-%%    # ydata(ydx) = rawCountryData(ydx, find(rawCountryData(ydx, :)));
-%%    rawCountryData(ydx, find(rawCountryData(ydx, :)))
-%%  endfor  
-%%  % ydata = rawCountryData(find(rawCountryData));
-
-
-%%  xdata = 1:1:size(ydata, 2);
-%%  xdata = 1:1:size(ydata, 1);
-
-  [f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ...
+  [f1, eqnParams, kvg1, iter1, corrmat, covp, covr1, stdresid1, Z1, r2] = ...
     fitCurve(xdata, ydata, p, leasqrfunc);
 
   titleStr = "";
   for si = 1:size(countryNames, 1)
-    titleStr = [titleStr, " ", countryNames(si, :)];
+    titleStr = [titleStr, " ~", strtrim(countryNames(si, :))];
   endfor
 
   ["**For ", titleStr, "**"]
   "\tr2 = "
-  r21
+  r2
   "\tparams = "
-  p1
+  eqnParams
   
-  
-  
-  plotyy(xdata(1, :), f1(1:size(ydata, 1):size(f1, 1)), xdata(1, :), ydata),
-  # plot(xdata, ydata, "-o",xdata(1, :), f1(1:size(f1, 1):size(f1, 1)), "-*" ),
-  # legend([countryNames; "Model"],"Location","northwest"),
-  legend(["Model"; countryNames],"Location","northwest"),
-  title(["Actual vs Model ", titleStr]);
-  
+  stdresid1
+  titleStr = ["Actual vs Model for", titleStr, "\n"];
+  eqnStr = ["Y = ", num2str(eqnParams(3)), "/ ( 1 +  e^{(-(X - ", num2str(eqnParams(2), 3), ") / ", num2str(eqnParams(1), 3), ")})"]
+  titleStr = [titleStr, eqnStr ];
+  [ax, h1, h2] = plotyy(xdata(1, :), f1(1:size(ydata, 1):size(f1, 1)), xdata(1, :), ydata);
+  legend(["Model"; countryNames],"Location","northwest");
+  title(titleStr);
+  grid on;
 endfunction
 
 function doCurveFit(dates, countries, rawdata, leasqrfunc)
@@ -70,86 +47,62 @@ function doCurveFit(dates, countries, rawdata, leasqrfunc)
   for cidx = 1:size(countries, 1)
     country = strtrim(countries(cidx, :));
     [xmatrix, matrix] = prepFitting(X, xmatrix, rawdata.(country), matrix);
-    fitMeBabyOneMoreTime(countries, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
-  endfor  
+  endfor
+  fitMeBabyOneMoreTime(countries, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
 endfunction
 
 X = 1:1:size(dates, 2);
-doCurveFit(X, ['Italy'; 'Spain'; 'US'; 'United Kingdom'; 'Germany'], countryDataConfirmed, leasqrfunc);
+
+%%doCurveFit(X, ["Italy"; "Spain"; "US"; "United Kingdom"; "Germany"], countryDataConfirmed, leasqrfunc);
+%%figure,
+%%doCurveFit(X, ["US"; "United Kingdom"], countryDataConfirmed, leasqrfunc);
+%%figure,
+doCurveFit(X, 'Italy', countryDataConfirmed, leasqrfunc);
+return;
 figure,
-
-matrix = [];
-xmatrix = [];
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("Italy"), matrix);
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("Spain"), matrix);
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("US"), matrix);
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("United Kingdom"), matrix);
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("Germany"), matrix);
-
-[f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ...
-    fitCurve(xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
-
-
-ySer{1, 1} = "Spain";
-ySer{1, 2} = countryDataConfirmed.("Spain");
-ySer{2, 1} = "Italy";
-ySer{2, 2} = countryDataConfirmed.("Italy");
-ySer{3, 1} = "US";
-ySer{3, 2} = countryDataConfirmed.("US");
-ySer{4, 1} = "United Kingdom";
-ySer{4, 2} = countryDataConfirmed.("United Kingdom");
-ySer{5, 1} = "Germany";
-ySer{5, 2} = countryDataConfirmed.("Germany");
-
-plotyy(xmatrix(1, :), f1(1:size(matrix, 1):size(f1, 1)), X, cell2mat(ySer(:, 2)));
-legend(["Model"; "Spain"; "Italy"; "US"; "UK"; "Germany"],"Location","northwest");
-
-return
+doCurveFit(X, 'Spain', countryDataConfirmed, leasqrfunc);
 figure,
+doCurveFit(X, 'US', countryDataConfirmed, leasqrfunc);
+figure,
+doCurveFit(X, 'United Kingdom', countryDataConfirmed, leasqrfunc);
+figure,
+doCurveFit(X, 'Germany', countryDataConfirmed, leasqrfunc);
 
 
-matrix = [];
-xmatrix = [];
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("US"), matrix);
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("United Kingdom"), matrix);
-
-fitMeBabyOneMoreTime(["US"; "UK"], xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
-
+%% Commented lines below for creating charts of model against raw numbers as opposed to the diff(CoD) as doCurveFit is wont to do.
+%% The model is always constructed from the diffs but the remaining series can be constructed from actual data.
+%% 
+%%matrix = [];
+%%xmatrix = [];
+%%[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("Italy"), matrix);
+%%[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("Spain"), matrix);
+%%[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("US"), matrix);
+%%[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("United Kingdom"), matrix);
+%%[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.("Germany"), matrix);
+%%
 %%[f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ...
-%%    fitCurve("IT_ES_US_UK_DE", X, matrix, leasqrfunc);
+%%    fitCurve(xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
+%%
+%%
+%%ySer{1, 1} = "Spain";
+%%ySer{1, 2} = countryDataConfirmed.("Spain");
+%%ySer{2, 1} = "Italy";
+%%ySer{2, 2} = countryDataConfirmed.("Italy");
+%%ySer{3, 1} = "US";
+%%ySer{3, 2} = countryDataConfirmed.("US");
+%%ySer{4, 1} = "United Kingdom";
+%%ySer{4, 2} = countryDataConfirmed.("United Kingdom");
+%%ySer{5, 1} = "Germany";
+%%ySer{5, 2} = countryDataConfirmed.("Germany");
+%%
+%%plotyy(xmatrix(1, :), f1(1:size(matrix, 1):size(f1, 1)), X, cell2mat(ySer(:, 2)));
+%%legend(["Model"; "Spain"; "Italy"; "US"; "UK"; "Germany"],"Location","northwest");
+%%figure,
+%%xmatrix = [];
+%%matrix = [];
+%%country = "Italy";
+%%[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.(country), matrix);
+%%fitMeBabyOneMoreTime(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
+%%figure,
+%%
 
-
-
-xmatrix = [];
-matrix = [];
-country = "Italy";
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.(country), matrix);
-fitMeBabyOneMoreTime(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
-figure,
-
-xmatrix = [];
-matrix = [];
-country = "Spain";
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.(country), matrix);
-fitMeBabyOneMoreTime(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
-
-figure,
-xmatrix = [];
-matrix = [];
-country = "US";
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.(country), matrix);
-fitMeBabyOneMoreTime(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
-figure,
-
-xmatrix = [];
-matrix = [];
-country = "United Kingdom";
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.(country), matrix);
-fitMeBabyOneMoreTime(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
-figure,
-
-xmatrix = [];
-matrix = [];
-country = "Germany";
-[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.(country), matrix);
-fitMeBabyOneMoreTime(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
