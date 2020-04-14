@@ -8,35 +8,47 @@ leasqrfunc = logisticFn
 function [xmatrix, matrix] = prepFitting(xdata, xmatrix, ydata, matrix) 
   ysz = size(matrix, 1);
   yDiffs = diff(ydata);
+%%  yDiffs = ydata;
   matrix(ysz + 1, :) = yDiffs;
   xsz = size(xmatrix, 1);
   xmatrix(xsz + 1, :) = 1:1:size(yDiffs, 2);
   
 endfunction
 
-function fitMeBabyOneMoreTime(countryNames, xdata, ydata, p, leasqrfunc) 
+function [f1, eqnParams, kvg1, iter1, corrmatEqnP, covmatEqnP, covmatRes, ... 
+  stdresid, confIntervals, r2] = logisticFit(countryNames, xdata, ...
+  ydata, p, leasqrfunc) 
 
-  [f1, eqnParams, kvg1, iter1, corrmat, covp, covr1, stdresid1, Z1, r2] = ...
+  [f1, eqnParams, kvg1, iter1, corrmatEqnP, covmatEqnP, covmatRes, stdresid, confIntervals, r2] = ...
     fitCurve(xdata, ydata, p, leasqrfunc);
-
+  sqrt(covmatEqnP)
   titleStr = "";
   for si = 1:size(countryNames, 1)
     titleStr = [titleStr, " ~", strtrim(countryNames(si, :))];
   endfor
 
+  xdata = 1:1:size(xdata, 2);
   ["**For ", titleStr, "**"]
-  "\tr2 = "
   r2
   "\tparams = "
   eqnParams
   
-  stdresid1
+
   titleStr = ["Actual vs Model for", titleStr, "\n"];
-  eqnStr = ["Y = ", num2str(eqnParams(3)), "/ ( 1 +  e^{(-(X - ", num2str(eqnParams(2), 3), ") / ", num2str(eqnParams(1), 3), ")})"]
+  eqnStr = ["Y = ", num2str(eqnParams(3), "%d"), "/ ( 1 +  e^{(-(X - ", num2str(eqnParams(2), 3), ") / ", num2str(eqnParams(1), 3), ")})"]
   titleStr = [titleStr, eqnStr ];
   [ax, h1, h2] = plotyy(xdata(1, :), f1(1:size(ydata, 1):size(f1, 1)), xdata(1, :), ydata);
+  set(ax(1), 'yminorgrid', 'on');
+  set(ax(1), 'yminortick', 'on');
+  set(ax(2), 'yminorgrid', 'on');
+  set(ax(2), 'yminortick', 'on');
+  
+  set(h1, 'Marker', 'o');
+  set(h2, 'Marker', ['*'; 'd']);
+  
   legend(["Model"; countryNames],"Location","northwest");
   title(titleStr);
+  
   grid on;
 endfunction
 
@@ -44,11 +56,12 @@ function doCurveFit(dates, countries, rawdata, leasqrfunc)
   matrix = [];
   xmatrix = [];
   X = 1:1:size(dates, 2);
+  
   for cidx = 1:size(countries, 1)
     country = strtrim(countries(cidx, :));
     [xmatrix, matrix] = prepFitting(X, xmatrix, rawdata.(country), matrix);
   endfor
-  fitMeBabyOneMoreTime(countries, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
+  logisticFit(countries, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
 endfunction
 
 X = 1:1:size(dates, 2);
@@ -57,8 +70,11 @@ X = 1:1:size(dates, 2);
 %%figure,
 %%doCurveFit(X, ["US"; "United Kingdom"], countryDataConfirmed, leasqrfunc);
 %%figure,
-doCurveFit(X, 'Italy', countryDataConfirmed, leasqrfunc);
+
+doCurveFit(X, 'United Kingdom', countryDataConfirmed, leasqrfunc);
 return;
+figure,
+doCurveFit(X, 'Italy', countryDataConfirmed, leasqrfunc);
 figure,
 doCurveFit(X, 'Spain', countryDataConfirmed, leasqrfunc);
 figure,
@@ -67,6 +83,7 @@ figure,
 doCurveFit(X, 'United Kingdom', countryDataConfirmed, leasqrfunc);
 figure,
 doCurveFit(X, 'Germany', countryDataConfirmed, leasqrfunc);
+
 
 
 %% Commented lines below for creating charts of model against raw numbers as opposed to the diff(CoD) as doCurveFit is wont to do.
@@ -102,7 +119,7 @@ doCurveFit(X, 'Germany', countryDataConfirmed, leasqrfunc);
 %%matrix = [];
 %%country = "Italy";
 %%[xmatrix, matrix] = prepFitting(X, xmatrix, countryDataConfirmed.(country), matrix);
-%%fitMeBabyOneMoreTime(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
+%%logisticFit(country, xmatrix, matrix, [ 4, 100, 25000 ], leasqrfunc);
 %%figure,
 %%
 

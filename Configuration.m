@@ -10,6 +10,7 @@ function [Config] = Configuration()
   protectorates = [protectorates;'Montserrat';'Diamond Princess'];
   protectorates = [protectorates;'Northwest Territories';'Yukon';'Anguilla'];
   protectorates = [protectorates;'British Virgin Islands';'Turks and Caicos Islands'];
+  
   Config.('protectorates') = protectorates;
   Config.('baseUrl') = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series';
   Config.('location') = '/tmp';
@@ -23,5 +24,5 @@ function [Config] = Configuration()
   
   % Anon func that calls cellfun with another anon func 
   Config.('dateAxisFormatter') = @(dtCellArray, fmt) cellfun(@(x) datestr(x, fmt), dtCellArray, 'UniformOutput', false);
-
+  
 endfunction
