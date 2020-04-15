@@ -29,10 +29,11 @@ function [f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = fitCur
   pin = p;
 %%  wt1 = (1 + 0 * X) ./ sqrt(Y);
   pin
-  stol=0.001; niter=150;
+  stol=0.1; niter=150;
+  
   dp = 0.001 * ones (size (pin));
-  global verbose;
-  verbose = 0;
+%%  global verbose;
+%%  verbose = 1;
   [f1, p1, kvg1, iter1, corp1, covp1, covr1, stdresid1, Z1, r21] = ... 
     leasqr (X, Y, pin, ... 
     % fromTheEgOfLeasqr,
