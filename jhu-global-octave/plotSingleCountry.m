@@ -25,14 +25,15 @@
 function [hax, h1, h2] = plotSingleCountry (convertDateNumCellArrToStr, xSer, ySer, y2, logAxis = false)
   clf;
   hold on;
-  size(xSer);
+  size(xSer)
+  size(ySer)
   if (logAxis)
     [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)), @semilogy);
   else
     [hax, h1, h2] = plotyy(xSer, cell2mat(ySer(:, 2)), xSer, cell2mat(y2(:, 2)));
   endif
   colormap(rainbow(6));
-  set(hax(2),'XGrid','on', 'YGrid', 'on');
+    set(hax(2),'XGrid','on', 'YGrid', 'on');
   x1ticks = get(hax(1), 'xticklabel');
    
   for (m = 1:size(x1ticks, 2))
@@ -48,7 +49,7 @@ function [hax, h1, h2] = plotSingleCountry (convertDateNumCellArrToStr, xSer, yS
   set(h1, 'Marker', 'o');
   set(h2, 'Marker', ['*'; 'd']);
   legend([ySer(:,1); y2(:,1)],'Location','northwest');
-  ylabel (hax(1), "Cases & Recoveries");
-  ylabel (hax(2), "Deaths");
+  ylabel (hax(1), "Cases");
+  ylabel (hax(2), "Recoveries & Deaths");
 
 endfunction

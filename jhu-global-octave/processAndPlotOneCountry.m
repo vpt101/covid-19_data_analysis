@@ -49,15 +49,23 @@ function [retval] = processAndPlotOneCountry(country)
   [dates, countryData, countryProvinceStruct] = processFile(protectorates, filePath, url);
   recoveries = countryData.(country);
   
+%%  dates = dates{1:338}
+%%  cases = cases{1:338}
+%%  recoveries = recoveries{1:338}
+%%  deaths = deaths{1:338}
+  
   xSer = cell2mat(dates);
   ySer{1, 1} = 'Cases';
-  ySer{1, 2} = cases;
+  ySer{1, 2} = movavg(cases, 7, 7);
   ySer{2, 1} = 'Recovered';
-  ySer{2, 2} = recoveries;
+  ySer{2, 2} = movavg(recoveries, 7, 7);
   y2{1, 1} = 'Deaths';
-  y2{1, 2} = deaths;
+  y2{1, 2} = movavg(deaths, 7, 7);
+%%  y2{2, 1} = 'Recovered';
+%%  y2{2, 2} = movavg(recoveries, 14, 14);
   
-  convertDateNumCellArrToStr = Config.('dateAxisFormatter');
+  
+    convertDateNumCellArrToStr = Config.('dateAxisFormatter');
   % Regular chart
   [hax, h1, h2] = plotSingleCountry(convertDateNumCellArrToStr, xSer, ySer, y2);
   title([country, '(Linear)' ])

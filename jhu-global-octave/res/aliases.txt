@@ -1,0 +1,2 @@
+US	USA	United States	United States Of America	America
+UK	United Kingdom	GB	Great Britain	Britain

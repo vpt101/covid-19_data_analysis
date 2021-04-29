@@ -1,5 +1,6 @@
 function [Config] = Configuration()
   pkg load statistics;
+  pkg load financial;
   
   Config = struct();
   protectorates = ['French Guiana';'French Polynesia';'Guadeloupe';'Mayotte'];
@@ -18,8 +19,9 @@ function [Config] = Configuration()
   Config.('deathsFilename') = 'time_series_covid19_deaths_global.csv';
   Config.('recoveredFilename') = 'time_series_covid19_recovered_global.csv';
   
-  # Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'; 'US'];
-  Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'; 'US'; 'India'];
+  % Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'; 'US'];
+  % Config.('defaultCountryList') = ['China'; 'Italy'; 'Spain'; 'United Kingdom'; 'US'; 'India'];
+  Config.('defaultCountryList') = ['United Kingdom'; 'US'; 'India'; 'Russia'];
   
   
   % Anon func that calls cellfun with another anon func 

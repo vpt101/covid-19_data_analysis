@@ -83,7 +83,7 @@ function [dates, countryDataStruct, countryProvinceStruct] = processFile (protec
         countryDataStruct.(provinceCountryName) = zeros(1, numDataCols);
         existingData = countryDataStruct.(provinceCountryName);
         rowData = cell2mat(cellCsv(m + 1, 5:(numDataCols + 4)));
-        countryDataStruct.(provinceCountryName) = existingData + rowData;
+          countryDataStruct.(provinceCountryName) = existingData + rowData;
       endif
     else
       existingData = countryDataStruct.(countryName);
