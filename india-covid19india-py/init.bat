@@ -24,3 +24,4 @@ python -c "import pip; pip.main(['install', 'covid19dh'])"
 conda install --name analisa ruptures
 conda install --name analisa optuna
 python -c "import pip; pip.main(['install', 'better_exceptions'])"
+conda install --name analisa lmfit
