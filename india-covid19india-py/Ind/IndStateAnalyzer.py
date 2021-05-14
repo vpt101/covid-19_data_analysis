@@ -2,13 +2,17 @@
 """
 IndStateAnalyzer.py
 """
+import sys
+
 import Meta
 import numba
 
 
 cumsum = lambda series : series.cumsum().iloc[:]
-movavg = lambda n, series : cumsum(series).iloc[:].rolling(window=n).mean()
-gaussianMovAvg = lambda n, std, series : cumsum(series).iloc[:].rolling(window=n, win_type='gaussian').mean(std=std)
+movavg_cumulative = lambda n, series : cumsum(series).iloc[:].rolling(window=n).mean()
+movavg = lambda n, series : series.iloc[:].rolling(window=n).mean()
+gaussMovAvg_cumulative = lambda n, std, series : cumsum(series).iloc[:].rolling(window=n, win_type='gaussian').mean(std=std)
+gaussMovAvg = lambda n, std, series : series.iloc[:].rolling(window=n, win_type='gaussian').mean(std=std)
 pctChg = lambda series : series.pct_change()
 
 

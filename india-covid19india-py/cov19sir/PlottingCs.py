@@ -46,7 +46,7 @@ class PlottingCs:
         # snl.register(jhu_data, population_data)
         return snl
 
-    def defaultEstimate(self, snl, tout=30):
+    def defaultEstimate(self, snl, tout=30, phaseName="2nd"):
         print('Estimating...')
         snl.estimate(cs.SIRF, timeout=tout)
         print('Finished estimating')
@@ -56,7 +56,6 @@ class PlottingCs:
         bs = snl.summary(columns=["Start", "End", "RMSLE", "Trials", "Runtime"])
         print(bs)
 
-        phaseName = "7th"
         snl.estimate_accuracy(phase=phaseName)
         print('Accuracy, ' + phaseName + ' phase:')
         metrics_list = ["MAE", "MSE", "MSLE", "RMSE", "RMSLE"]
