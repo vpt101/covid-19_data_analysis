@@ -13,8 +13,20 @@ from IndTypes import IndType
 import Meta as cc
 
 
-def drawChart(pdf, stateCode):
-        IndStatePlotter.basicChart(pdf, stateCode)
+drawChart = lambda pdf, stateCode: IndStatePlotter.basicChart(pdf, stateCode)
+
+lorentz = lambda df, stateCode : fitter(df, stateCode, Isa.IndStateAnalyzer.lorentzianModel)
+exp = lambda df, stateCode: fitter(df, stateCode, Isa.IndStateAnalyzer.expModel)
+poly = lambda df, stateCode: fitter(df, stateCode, Isa.IndStateAnalyzer.polyModel)
+gauss = lambda df, stateCode: fitter(df, stateCode, Isa.IndStateAnalyzer.gaussianModel)
+
+def model(stateCode, routine=poly):
+        # [idf, sdf] = indChart(lambda x: x.fillna(0), stateCode)
+        [idf, sdf] = ind(stateCode)
+        IndStatePlotter.chartSingleSeries(sdf, stateCode)
+        IndStatePlotter.chartMultipleSeries(sdf, list(cc.IndStateAbbrMap.keys()))
+        routine(sdf, stateCode)
+
 
 def ind(stateCode, routine=None):
         indParser = IndParser.IndParser()
@@ -35,7 +47,6 @@ def ind(stateCode, routine=None):
                 pdf = isa.singleStateMetric(stateCode,
                         IndType.CONFIRMED.value,
                         lambda series : routine(series))
-        IndStatePlotter.basicChart(pdf, stateCode)
         return [df, pdf]
 
 
@@ -49,20 +60,15 @@ def csp(countryName, provinceName):
         pcs.defaultEstimate(snl, 10, '8th')
         return snl
         
-def indChart(routine, stateCode):
+def indChart(smoothingFunc, stateCode):
         [idf, sdf] = ind(stateCode)
-        drawChart(routine(sdf), stateCode)
+        drawChart(smoothingFunc(sdf), stateCode)
         return [idf, sdf]
 
-def lorentzianModel(df, stateCode):
-        from lmfit.models import LorentzianModel
-        model = LorentzianModel()
-        mdf=df.reset_index(drop=True).fillna(0)
-        params = model.guess(mdf[stateCode], x=mdf['Date'].index)
-        result = model.fit(mdf[stateCode], params, x=mdf['Date'].index)
-        result.plot_fit()
-        import matplotlib.pyplot as plt
-        plt.show()
+def fitter(df, stateCode, fitterFunction):
+        [params, model, result] = fitterFunction(df, stateCode)
+        IndStatePlotter.chartLmfitModel(result)
+        IndStatePlotter.predict(model, params)
 
 
 if __name__ == '__main__':
@@ -73,27 +79,20 @@ if __name__ == '__main__':
 #        province = 'KL'
 
         # csp(cc.longName(country), cc.inStateName(province))
-        [ind, sdf] = ind('MH')
+
+
+        model('UP')
+       
         print ('Done')
 
 
 ## To run it in an interactive Python Shell
 ## exec(open('main.py').read()) 
-## OR 
+##      OR 
 ## In IPython
 ## import main as m
 ## [idf, sdf] = m.indChart(lambda x: x.tail(60), 'KL')
 ## OR for the lorentzianModel() :: [idf, sdf] = m.indChart(lambda x: x.tail(60), 'KL')
-
-"""
-## https://cars9.uchicago.edu/software/python/lmfit/examples/example_use_pandas.html
-from lmfit.models import LorentzianModel
-model = LorentzianModel()
-mdf=sdf.reset_index(drop=True)
-params = model.guess(mdf['KL'], x=mdf['Date'].index)
-result = model.fit(mdf['KL'], params, x=mdf['Date'].index)
-"""
-
 
 """
 https://stackoverflow.com/questions/3433486/how-to-do-exponential-and-logarithmic-curve-fitting-in-python-i-found-only-poly
