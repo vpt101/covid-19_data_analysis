@@ -1,34 +1,42 @@
 # encoding: utf-8
 
 import sys
+
 sys.path.append(r'./Ind')
 
 
-from Ind import IndStateAnalyzer as Isa
-from Ind import IndParser
-# from IndStateAnalyzer import IndStateAnalyzer
-
 from IndStatePlotter import IndStatePlotter
 from IndTypes import IndType
+from ModellingMode import ModellingMode
+
 import Meta as cc
+from Ind import IndParser
+from Ind import IndStateAnalyzer as Isa
+
+# from IndStateAnalyzer import IndStateAnalyzer
 
 
+DEFAULT_MODE = ModellingMode.FIRST_SECOND
 drawChart = lambda pdf, stateCode: IndStatePlotter.basicChart(pdf, stateCode)
 
-lorentz = lambda df, stateCode : fitter(df, stateCode, Isa.IndStateAnalyzer.lorentzianModel)
-exp = lambda df, stateCode: fitter(df, stateCode, Isa.IndStateAnalyzer.expModel)
-poly = lambda df, stateCode: fitter(df, stateCode, Isa.IndStateAnalyzer.polyModel)
-gauss = lambda df, stateCode: fitter(df, stateCode, Isa.IndStateAnalyzer.gaussianModel)
+lorentz = lambda isa, df, stateCode: fitter(stateCode, isa.lorentzianModel)
+poly    = lambda isa, df, stateCode: fitter(stateCode, isa.polyModel)
+exp     = lambda isa, df, stateCode: fitter(stateCode, isa.expModel)
+gauss   = lambda isa, df, stateCode: fitter(stateCode, isa.gaussianModel)
 
-def model(stateCode, routine=poly):
-        # [idf, sdf] = indChart(lambda x: x.fillna(0), stateCode)
-        [idf, sdf] = ind(stateCode)
+def model(stateCode, fittingFunc=poly, mode=DEFAULT_MODE):
+        [idf, sdf, isa] = ind(stateCode, mode=mode)
+        
         IndStatePlotter.chartSingleSeries(sdf, stateCode)
-        IndStatePlotter.chartMultipleSeries(sdf, list(cc.IndStateAbbrMap.keys()))
-        routine(sdf, stateCode)
+        """ 
+        IndStatePlotter.chartMultipleSeries(idf[idf['Status'].str.contains(IndType.CONFIRMED.value)],
+                [*cc.IndStateAbbrMap.keys()])
+        """
+        fittingFunc(isa, sdf, stateCode)
+        # IndStatePlotter.drawAllCharts()
 
 
-def ind(stateCode, routine=None):
+def ind(stateCode, routine=None, mode=DEFAULT_MODE):
         indParser = IndParser.IndParser()
         df = indParser.fetchStateWiseData()
         """ 
@@ -37,17 +45,17 @@ def ind(stateCode, routine=None):
         print(Meta.StateAbbrMap['UP'])
         """
 
-        isa = Isa.IndStateAnalyzer(df)
+        isa = Isa.IndStateAnalyzer(df, mode)
         print ('Running for ' + stateCode)
         if routine is None:
                 pdf = isa.singleStateMetric(stateCode,
                         IndType.CONFIRMED.value,
-                        lambda series : Isa.movavg(6, series))
+                        lambda series : Isa.movavg(5, series))
         else:
                 pdf = isa.singleStateMetric(stateCode,
                         IndType.CONFIRMED.value,
                         lambda series : routine(series))
-        return [df, pdf]
+        return [df, pdf, isa]
 
 
 def csp(countryName, provinceName):
@@ -61,12 +69,12 @@ def csp(countryName, provinceName):
         return snl
         
 def indChart(smoothingFunc, stateCode):
-        [idf, sdf] = ind(stateCode)
+        [idf, sdf, isa] = ind(stateCode)
         drawChart(smoothingFunc(sdf), stateCode)
-        return [idf, sdf]
+        return [idf, sdf, isa]
 
-def fitter(df, stateCode, fitterFunction):
-        [params, model, result] = fitterFunction(df, stateCode)
+def fitter(stateCode, fitterFunction):
+        [params, model, result] = fitterFunction(stateCode)
         IndStatePlotter.chartLmfitModel(result)
         IndStatePlotter.predict(model, params)
 
